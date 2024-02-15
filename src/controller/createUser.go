@@ -2,6 +2,7 @@ package controller
 
 import (
 	"fmt"
+	"net/http"
 
 	"github.com/EnzoGamaDS/Go-Platform-Project/src/configuration/rest_err"
 	"github.com/EnzoGamaDS/Go-Platform-Project/src/controller/model/request"
@@ -20,4 +21,5 @@ func CreateUser(c *gin.Context) {
 		return
 	}
 	fmt.Println(userRequest)
+	c.JSON(http.StatusOK, gin.H{"user": userRequest})
 }
