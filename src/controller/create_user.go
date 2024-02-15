@@ -6,9 +6,13 @@ import (
 	"github.com/EnzoGamaDS/Go-Platform-Project/src/configuration/logger"
 	"github.com/EnzoGamaDS/Go-Platform-Project/src/configuration/validation"
 	"github.com/EnzoGamaDS/Go-Platform-Project/src/controller/model/request"
-	"github.com/EnzoGamaDS/Go-Platform-Project/src/controller/model/response"
+	"github.com/EnzoGamaDS/Go-Platform-Project/src/model"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
+)
+
+var (
+	UserDomainInterface model.UserDomainInterface
 )
 
 func CreateUser(c *gin.Context) {
@@ -29,12 +33,15 @@ func CreateUser(c *gin.Context) {
 		c.JSON(restErr.Code, restErr)
 		return
 	}
-	response := response.UserResponse{
-		ID:       "test",
-		Email:    userRequest.Email,
-		Name:     userRequest.Name,
-		Password: userRequest.Password,
-		Age:      userRequest.Age,
+	domain := model.NewUserDomain(
+		userRequest.Email,
+		userRequest.Password,
+		userRequest.Name,
+		userRequest.Age,
+	)
+
+	if err := domain.CreateUser(); err != nil {
+		c.JSON(err.Code, err)
 	}
 
 	logger.Info("User created successfully",
@@ -42,5 +49,5 @@ func CreateUser(c *gin.Context) {
 			"journey",
 			"CreateUser",
 		))
-	c.JSON(http.StatusOK, response)
+	c.String(http.StatusOK, "")
 }
